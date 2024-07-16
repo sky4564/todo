@@ -11,6 +11,13 @@ const TodoList = () => {
     setNewTodo(e.target.value);
   };
 
+  const handleKeyPress = (e) => {
+    console.log(e)
+    if(e.key === 'Enter') {
+      handleAddTodo()
+    }
+  }
+
   const handleAddTodo = () => {
     if (newTodo.trim() !== '') {
       setTodos([...todos, newTodo]);
@@ -31,6 +38,7 @@ const TodoList = () => {
           type="text"
           value={newTodo}
           onChange={handleInputChange}
+          onKeyDown={handleKeyPress}
           placeholder="Add a new todo"
           className="p-2 border border-gray-300 rounded mr-2 flex-grow"
         />
