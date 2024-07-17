@@ -1,4 +1,3 @@
-// authors.ts
 import { Hono } from 'hono'
 import { db } from "../../../../db/drizzle"
 import { work } from "../../../../db/schema"
