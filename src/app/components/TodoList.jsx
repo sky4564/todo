@@ -1,7 +1,15 @@
-// components/TodoList.js
 "use client"
 
 import { useState } from 'react';
+import { useAddTodo } from '../api/[[...route]]/use-add-todo';
+
+import { client } from "@root/lib/hono"
+
+
+
+
+// console.log('loading')
+// console.log(client)
 
 const TodoList = () => {
   const [todos, setTodos] = useState([]);
@@ -12,17 +20,42 @@ const TodoList = () => {
   };
 
   const handleKeyPress = (e) => {
-    console.log(e)
-    if(e.key === 'Enter') {
+    if (e.key === 'Enter') {
       handleAddTodo()
     }
   }
 
-  const handleAddTodo = () => {
+  // const mutation = useAddTodo();
+
+  const handleAddTodo = async () => {
     if (newTodo.trim() !== '') {
       setTodos([...todos, newTodo]);
       setNewTodo('');
     }
+
+
+    console.log('add todo ! ')
+    // const res = await client.api.work.$get()
+    let form = {
+      todo: 'num1_todo'
+    }
+    // const res2 = await client.api.work.$post({
+    //   json
+    // })
+
+    const res = await client.api.work[`${newTodo}`]["$post"]({
+      form
+    })
+
+
+
+    console.log(res)
+
+    // mutation.mutate(values, {
+    //   onSuccess: () => {
+    //     alert('mutation is success !!')
+    //   },
+    // });
   };
 
   const handleDeleteTodo = (index) => {

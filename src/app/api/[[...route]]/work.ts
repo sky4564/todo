@@ -2,19 +2,44 @@ import { Hono } from 'hono'
 import { db } from "../../../../db/drizzle"
 import { work } from "../../../../db/schema"
 
+
+
+import { z } from "zod"
+import { zValidator } from "@hono/zod-validator";
+
 const app = new Hono()
 
 
 
 app.get('/', (c) => c.json('list work'))
-app.post('/', (c) => c.json('create an work', 201))
-app.post('/:todo',
+
+
+
+app.post(
+  '/:todo',
+
+  zValidator(
+    'form',
+    z.object({
+      todo: z.string()
+    })
+  ),
+
   async (c) => {
     const data = await db.insert(work).values({
       todo: c.req.param('todo')
-    }).returning()
-    return c.json(`insert data to db == ${c.req.param('todo')}`, 201)
+    })
+
+    return c.json(
+      {
+        ok: true,
+        msg: `insert data to db == ${c.req.param('todo')}`
+      },
+      201
+    )
+
   }
+
 )
 
 
