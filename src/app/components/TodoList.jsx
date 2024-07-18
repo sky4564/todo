@@ -36,16 +36,20 @@ const TodoList = () => {
 
     console.log('add todo ! ')
     // const res = await client.api.work.$get()
-    let form = {
-      todo: 'num1_todo'
-    }
     // const res2 = await client.api.work.$post({
     //   json
     // })
+    
 
+    let form = {
+      todo: 'num1_todo'
+    }
+    // path parameter 사용 RPC 
     const res = await client.api.work[`${newTodo}`]["$post"]({
       form
     })
+
+    // 그냥 파라미미터 사용해서는 ?
 
 
 

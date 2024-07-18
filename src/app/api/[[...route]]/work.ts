@@ -17,19 +17,21 @@ app.get('/', (c) => c.json('list work'))
 
 app.post(
   '/:todo',
-
   zValidator(
     'form',
     z.object({
       todo: z.string()
     })
   ),
-
   async (c) => {
-    const data = await db.insert(work).values({
+    const body = await (await c.req.formData()).get('todo')
+    console.log(body)
+    console.log(body)
+    console.log(body)
+    console.log(body)
+    const data = await db.insert(work).values({      
       todo: c.req.param('todo')
     })
-
     return c.json(
       {
         ok: true,
@@ -37,9 +39,7 @@ app.post(
       },
       201
     )
-
   }
-
 )
 
 
