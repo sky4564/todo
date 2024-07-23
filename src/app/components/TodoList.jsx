@@ -8,17 +8,27 @@ import { client } from "@root/lib/hono"
 const TodoList = () => {
   const [todos, setTodos] = useState([]);
   const [newTodo, setNewTodo] = useState('');
+  const [render, setRender] = useState(false);
+
+  useEffect(() => {
+    console.log('이거렌더링 됨')
+    GetList()
+  }, [])
+
+
   const GetList = async () => {
-    
-    const response = await client.api.work.$get();    
-    const { data } = await response.json();
-    
-    data.map((c, i) => {
-      console.log(c.todo)
-      todos.push(c.todo)            
-    })
-    console.log(todos)
+    if (!render) {
+      console.log('get list')
+      const response = await client.api.work.$get();
+      const { data } = await response.json();
+      data.map((c, i) => {
+        todos.push(c.todo)
+      })
+      setTodos([...todos])
+      setRender(true)
+    }
   }
+
 
   const handleInputChange = (e) => {
     setNewTodo(e.target.value);
@@ -36,37 +46,14 @@ const TodoList = () => {
     if (newTodo.trim() !== '') {
       setTodos([...todos, newTodo]);
       setNewTodo('');
+      let form = {
+        todo: 'iswork'
+      }
+      // path parameter 사용 RPC 
+      const res = await client.api.work[`${newTodo}`]["$post"]({
+        form
+      })
     }
-
-
-    console.log('add todo ! ')
-    // const res = await client.api.work.$get()
-    // const res2 = await client.api.work.$post({
-    //   json
-    // })
-    let form = {
-      todo: 'iswork'
-    }
-
-
-    // path parameter 사용 RPC 
-    const res = await client.api.work[`${newTodo}`]["$post"]({
-      form
-    })
-
-    GetList()
-
-    // 그냥 파라미미터 사용해서는 ?
-
-
-
-    console.log(res)
-
-    // mutation.mutate(values, {
-    //   onSuccess: () => {
-    //     alert('mutation is success !!')
-    //   },
-    // });
   };
 
   const handleDeleteTodo = (index) => {
@@ -93,6 +80,7 @@ const TodoList = () => {
           Add
         </button>
       </div>
+
       <ul>
         {todos.map((todo, index) => (
           <li
@@ -109,6 +97,8 @@ const TodoList = () => {
           </li>
         ))}
       </ul>
+
+
     </div>
   );
 };
