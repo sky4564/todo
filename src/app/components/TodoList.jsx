@@ -10,10 +10,10 @@ const TodoList = () => {
   const [newTodo, setNewTodo] = useState('');
   const [render, setRender] = useState(false);
 
-  useEffect(() => {
-    console.log('이거렌더링 됨')
-    GetList()
-  }, [])
+  // useEffect(() => {
+  //   console.log('이거렌더링 됨')
+  //   GetList()
+  // }, [])
   
   const GetList = async () => {
     if (!render) {
