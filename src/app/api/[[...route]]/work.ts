@@ -11,7 +11,17 @@ const app = new Hono()
 
 
 
-app.get('/', (c) => c.json('list work'))
+app.get(
+  '/',
+  async (c) => {
+    const data = await db
+      .select({ 
+        todo: work.todo
+      })
+      .from(work)
+    return c.json({ data })
+  }
+)
 
 
 
@@ -29,7 +39,7 @@ app.post(
     console.log(body)
     console.log(body)
     console.log(body)
-    const data = await db.insert(work).values({      
+    const data = await db.insert(work).values({
       todo: c.req.param('todo')
     })
     return c.json(

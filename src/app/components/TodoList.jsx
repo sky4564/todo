@@ -1,19 +1,24 @@
 "use client"
 
-import { useState } from 'react';
-import { useAddTodo } from '../api/[[...route]]/use-add-todo';
-
+import { useEffect, useState } from 'react';
+import { useAddTodo } from '../api/[[...route]]/hook/use-add-todo';
+import { useQuery } from "@tanstack/react-query";
 import { client } from "@root/lib/hono"
-
-
-
-
-// console.log('loading')
-// console.log(client)
 
 const TodoList = () => {
   const [todos, setTodos] = useState([]);
   const [newTodo, setNewTodo] = useState('');
+  const GetList = async () => {
+    
+    const response = await client.api.work.$get();    
+    const { data } = await response.json();
+    
+    data.map((c, i) => {
+      console.log(c.todo)
+      todos.push(c.todo)            
+    })
+    console.log(todos)
+  }
 
   const handleInputChange = (e) => {
     setNewTodo(e.target.value);
@@ -39,15 +44,17 @@ const TodoList = () => {
     // const res2 = await client.api.work.$post({
     //   json
     // })
-    
-
     let form = {
-      todo: 'num1_todo'
+      todo: 'iswork'
     }
+
+
     // path parameter 사용 RPC 
     const res = await client.api.work[`${newTodo}`]["$post"]({
       form
     })
+
+    GetList()
 
     // 그냥 파라미미터 사용해서는 ?
 

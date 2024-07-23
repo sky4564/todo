@@ -1,10 +1,13 @@
+"use client"
+
 import TodoList from '@/app/components/TodoList'
+import { useEffect } from 'react';
 
 
 export default function Home() {
-  return (
+  return (    
   <div>
     <TodoList/>
-  </div>  
+  </div>
   );
 }
