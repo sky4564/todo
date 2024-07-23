@@ -1,8 +1,8 @@
 "use client"
 
 import { useEffect, useState } from 'react';
-import { useAddTodo } from '../api/[[...route]]/hook/use-add-todo';
-import { useQuery } from "@tanstack/react-query";
+// import { useAddTodo } from '../api/[[...route]]/hook/use-add-todo';
+// import { useQuery } from "@tanstack/react-query";
 import { client } from "@root/lib/hono"
 
 const TodoList = () => {
