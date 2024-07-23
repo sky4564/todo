@@ -1,9 +1,9 @@
 "use client"
 
 import { useEffect, useState } from 'react';
-// import { useAddTodo } from '../api/[[...route]]/hook/use-add-todo';
+import { useAddTodo } from '../api/[[...route]]/hook/use-add-todo';
 // import { useQuery } from "@tanstack/react-query";
-import { client } from "@root/lib/hono"
+
 
 const TodoList = () => {
   const [todos, setTodos] = useState([]);
@@ -14,13 +14,12 @@ const TodoList = () => {
     console.log('이거렌더링 됨')
     GetList()
   }, [])
-
-
+  
   const GetList = async () => {
     if (!render) {
       console.log('get list')
-      const response = await client.api.work.$get();
-      const { data } = await response.json();
+      // const response = await client.api.work.$get();
+      // const { data } = await response.json();
       data.map((c, i) => {
         todos.push(c.todo)
       })
@@ -46,13 +45,13 @@ const TodoList = () => {
     if (newTodo.trim() !== '') {
       setTodos([...todos, newTodo]);
       setNewTodo('');
-      let form = {
-        todo: 'iswork'
-      }
+      // let form = {
+      //   todo: 'iswork'
+      // }
       // path parameter 사용 RPC 
-      const res = await client.api.work[`${newTodo}`]["$post"]({
-        form
-      })
+      // const res = await client.api.work[`${newTodo}`]["$post"]({
+      //   form
+      // })
     }
   };
 
