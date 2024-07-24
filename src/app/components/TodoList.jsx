@@ -9,22 +9,33 @@ const TodoList = () => {
   const [newTodo, setNewTodo] = useState('');
   const [render, setRender] = useState(false);
 
+  const [data, setData] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  let host = '52.79.217.203'
+
   useEffect(() => {
-    console.log('이거렌더링 됨')
     GetList()
   }, [])
 
   const GetList = async () => {
-    if (!render) {
-      console.log('get list')
-      const response = await client.api.work.$get();
-      const { data } = await response.json();
-      data.map((c, i) => {
-        todos.push(c.todo)
+    fetch(`http://${host}/todo`)
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
+        return response.json();
       })
-      setTodos([...todos])
-      setRender(true)
-    }
+      .then((data) => {
+        setData(data);
+        console.log(data)
+        setLoading(false);
+      })
+      .catch((error) => {
+        setError(error);
+        setLoading(false);
+      });
   }
 
 
