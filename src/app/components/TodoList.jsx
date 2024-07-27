@@ -13,7 +13,7 @@ const TodoList = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  let host = '52.79.217.203'
+  
 
   useEffect(() => {
     console.log('start useEffect')
@@ -21,7 +21,7 @@ const TodoList = () => {
   }, [])
 
   const GetList = async () => {
-    fetch(`http://${host}/todo`)
+    fetch(`${process.env.NEXT_PUBLIC_APP_URL}/todo`)
       .then((response) => {
         if (!response.ok) {
           throw new Error('Network response was not ok');
@@ -51,17 +51,27 @@ const TodoList = () => {
     }
   }
 
+
+
+  const postData = async (param) => {
+    const response = await fetch(`${process.env.NEXT_PUBLIC_APP_URL}/todo`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ title: param, description: 'hard desc' }),
+    });
+    const result = await response.json();    
+    console.log(result)
+  };
+
   // const mutation = useAddTodo();
 
   const handleAddTodo = async () => {
-    
-    
     if (newTodo.trim() !== '') {
       setTodos([...todos, newTodo]);
+      await postData(newTodo)
       setNewTodo('');
-      // path parameter 사용 RPC 
-      let form = { todo: 'iswork' }
-      const res = await client.api.work[`${newTodo}`]["$post"]({ form })
     }
   };
 
