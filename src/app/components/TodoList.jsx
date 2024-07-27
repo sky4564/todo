@@ -9,13 +9,14 @@ const TodoList = () => {
   const [newTodo, setNewTodo] = useState('');
   const [render, setRender] = useState(false);
 
-  const [data, setData] = useState(null);
+  
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
   let host = '52.79.217.203'
 
   useEffect(() => {
+    console.log('start useEffect')
     GetList()
   }, [])
 
@@ -28,8 +29,9 @@ const TodoList = () => {
         return response.json();
       })
       .then((data) => {
-        setData(data);
-        console.log(data)
+        setTodos(data);
+        console.log('this is get data ', data)
+        console.log('this is set todos', todos)
         setLoading(false);
       })
       .catch((error) => {
@@ -52,6 +54,8 @@ const TodoList = () => {
   // const mutation = useAddTodo();
 
   const handleAddTodo = async () => {
+    
+    
     if (newTodo.trim() !== '') {
       setTodos([...todos, newTodo]);
       setNewTodo('');
@@ -92,7 +96,7 @@ const TodoList = () => {
             key={index}
             className="flex justify-between items-center mb-2 p-2 border border-gray-300 rounded"
           >
-            {todo}
+            {todo.title}
             <button
               onClick={() => handleDeleteTodo(index)}
               className="ml-2 bg-red-500 text-white p-1 rounded"
