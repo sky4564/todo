@@ -8,8 +8,6 @@ const TodoList = () => {
   const [todos, setTodos] = useState([]);
   const [newTodo, setNewTodo] = useState('');
   const [render, setRender] = useState(false);
-
-  
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
@@ -38,10 +36,33 @@ const TodoList = () => {
         setError(error);
         setLoading(false);
       });
-  }
+  }      
+  const postData = async (param) => {
+    const response = await fetch(`${process.env.NEXT_PUBLIC_APP_URL}/todo`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ title: param, description: 'hard desc' }),
+    });
+    const result = await response.json();
+    return result    
+  };
+
+  const deleteData = async (param) => {
+    const response = await fetch(`${process.env.NEXT_PUBLIC_APP_URL}/todo/${param}`, {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json',
+      },      
+    });
+    const result = await response.json();    
+    console.log(result)
+  };
 
 
   const handleInputChange = (e) => {
+    console.log(newTodo)
     setNewTodo(e.target.value);
   };
 
@@ -53,30 +74,29 @@ const TodoList = () => {
 
 
 
-  const postData = async (param) => {
-    const response = await fetch(`${process.env.NEXT_PUBLIC_APP_URL}/todo`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ title: param, description: 'hard desc' }),
-    });
-    const result = await response.json();    
-    console.log(result)
-  };
-
   // const mutation = useAddTodo();
 
   const handleAddTodo = async () => {
     if (newTodo.trim() !== '') {
-      setTodos([...todos, newTodo]);
-      await postData(newTodo)
+      console.log(todos)
+      console.log(newTodo)      
+      const data = await postData(newTodo)
+      setTodos([...todos, data]);
+      console.log('setNewtodo')
       setNewTodo('');
     }
   };
 
-  const handleDeleteTodo = (index) => {
-    const newTodos = todos.filter((_, i) => i !== index);
+  const handleDeleteTodo = (id) => {
+    console.log(id)
+    deleteData(id)
+    const newTodos = todos.filter((todo, _) => {      
+      console.log('is filter id'+ id)
+      console.log('is todo id'+ todo.id)
+      return id !== todo.id
+    });
+    console.log(newTodos)
+    console.log(newTodos)
     setTodos(newTodos);
   };
 
@@ -108,7 +128,7 @@ const TodoList = () => {
           >
             {todo.title}
             <button
-              onClick={() => handleDeleteTodo(index)}
+              onClick={() => handleDeleteTodo(todo.id)}
               className="ml-2 bg-red-500 text-white p-1 rounded"
             >
               Delete
