@@ -1,102 +1,50 @@
 "use client"
 
 import { useEffect, useState } from 'react';
-import { client } from "@root/lib/hono"
+import { getList, postData, deleteData } from '@root/src/app/components/TodoFn'
 
 
 const TodoList = () => {
   const [todos, setTodos] = useState([]);
   const [newTodo, setNewTodo] = useState('');
-  const [render, setRender] = useState(false);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-
-  
 
   useEffect(() => {
     console.log('start useEffect')
-    GetList()
+    const loadData = async () => {
+      try {
+        const result = await getList();
+        setTodos(result)
+      } catch (error) {        
+        return error
+      }
+    };
+    loadData()        
   }, [])
-
-  const GetList = async () => {
-    fetch(`${process.env.NEXT_PUBLIC_APP_URL}/todo`)
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error('Network response was not ok');
-        }
-        return response.json();
-      })
-      .then((data) => {
-        setTodos(data);
-        console.log('this is get data ', data)
-        console.log('this is set todos', todos)
-        setLoading(false);
-      })
-      .catch((error) => {
-        setError(error);
-        setLoading(false);
-      });
-  }      
-  const postData = async (param) => {
-    const response = await fetch(`${process.env.NEXT_PUBLIC_APP_URL}/todo`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ title: param, description: 'hard desc' }),
-    });
-    const result = await response.json();
-    return result    
-  };
-
-  const deleteData = async (param) => {
-    const response = await fetch(`${process.env.NEXT_PUBLIC_APP_URL}/todo/${param}`, {
-      method: 'DELETE',
-      headers: {
-        'Content-Type': 'application/json',
-      },      
-    });
-    const result = await response.json();    
-    console.log(result)
-  };
-
 
   const handleInputChange = (e) => {
     console.log(newTodo)
     setNewTodo(e.target.value);
   };
-
   const handleKeyPress = (e) => {
     if (e.key === 'Enter') {
       handleAddTodo()
     }
   }
-
-
-
-  // const mutation = useAddTodo();
-
   const handleAddTodo = async () => {
     if (newTodo.trim() !== '') {
       console.log(todos)
-      console.log(newTodo)      
+      console.log(newTodo)
       const data = await postData(newTodo)
       setTodos([...todos, data]);
       console.log('setNewtodo')
       setNewTodo('');
     }
   };
-
   const handleDeleteTodo = (id) => {
-    console.log(id)
     deleteData(id)
-    const newTodos = todos.filter((todo, _) => {      
-      console.log('is filter id'+ id)
-      console.log('is todo id'+ todo.id)
+    const newTodos = todos.filter((todo, _) => {
       return id !== todo.id
     });
-    console.log(newTodos)
-    console.log(newTodos)
     setTodos(newTodos);
   };
 
