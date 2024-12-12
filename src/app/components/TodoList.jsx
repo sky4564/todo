@@ -1,57 +1,50 @@
 "use client"
 
 import { useEffect, useState } from 'react';
-import { client } from "@root/lib/hono"
+import { getList, postData, deleteData } from '@root/src/app/components/TodoFn'
 
 
 const TodoList = () => {
   const [todos, setTodos] = useState([]);
   const [newTodo, setNewTodo] = useState('');
-  const [render, setRender] = useState(false);
 
   useEffect(() => {
-    console.log('이거렌더링 됨')
-    GetList()
+    console.log('start useEffect')
+    const loadData = async () => {
+      try {
+        const result = await getList();
+        setTodos(result)
+      } catch (error) {        
+        return error
+      }
+    };
+    loadData()        
   }, [])
 
-  const GetList = async () => {
-    if (!render) {
-      console.log('get list')
-      const response = await client.api.work.$get();
-      const { data } = await response.json();
-      data.map((c, i) => {
-        todos.push(c.todo)
-      })
-      setTodos([...todos])
-      setRender(true)
-    }
-  }
-
-
   const handleInputChange = (e) => {
+    console.log(newTodo)
     setNewTodo(e.target.value);
   };
-
   const handleKeyPress = (e) => {
     if (e.key === 'Enter') {
       handleAddTodo()
     }
   }
-
-  // const mutation = useAddTodo();
-
   const handleAddTodo = async () => {
     if (newTodo.trim() !== '') {
-      setTodos([...todos, newTodo]);
+      console.log(todos)
+      console.log(newTodo)
+      const data = await postData(newTodo)
+      setTodos([...todos, data]);
+      console.log('setNewtodo')
       setNewTodo('');
-      // path parameter 사용 RPC 
-      let form = { todo: 'iswork' }
-      const res = await client.api.work[`${newTodo}`]["$post"]({ form })
     }
   };
-
-  const handleDeleteTodo = (index) => {
-    const newTodos = todos.filter((_, i) => i !== index);
+  const handleDeleteTodo = (id) => {
+    deleteData(id)
+    const newTodos = todos.filter((todo, _) => {
+      return id !== todo.id
+    });
     setTodos(newTodos);
   };
 
@@ -81,9 +74,9 @@ const TodoList = () => {
             key={index}
             className="flex justify-between items-center mb-2 p-2 border border-gray-300 rounded"
           >
-            {todo}
+            {todo.title}
             <button
-              onClick={() => handleDeleteTodo(index)}
+              onClick={() => handleDeleteTodo(todo.id)}
               className="ml-2 bg-red-500 text-white p-1 rounded"
             >
               Delete
